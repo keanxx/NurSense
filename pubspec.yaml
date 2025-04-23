@@ -1,0 +1,83 @@
+name: nursense
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.1
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  
+  cupertino_icons: ^1.0.8
+  flutter_svg: ^2.0.17
+  smooth_page_indicator: ^1.1.0
+  iconify_flutter: ^0.0.7
+  buttons_tabbar:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+
+  
+  flutter_lints: ^5.0.0
+
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/nursenseLogo.svg
+    - assets/images/onboarding1.svg
+    - assets/images/onboarding2.svg
+    - assets/images/onboarding3.svg
+    - assets/images/onboarding4.svg
+    - assets/images/profileIcon.svg
+    - assets/images/heartRate.svg
+    - assets/images/bulbBlue.svg
+    - assets/images/ppt.svg
+    - assets/images/pptBlue.svg
+    - assets/images/wordWhite.svg
+    - assets/images/wordBlue.svg
+    - assets/images/bulb.svg
+    - assets/images/bulbWhite.svg
+    - assets/images/view.svg
+    - assets/images/chevronRight.svg
+    - assets/images/book.svg
+    - assets/images/bookShelves.svg
+    - assets/images/list.svg
+    - assets/images/download.svg
+    - assets/images/about.svg
+    - assets/images/dashboard.svg
+    - assets/images/logout.svg
+    
+
+
+  fonts:
+    - family: Urbanist  # Font Family Name
+      fonts:
+        - asset: assets/fonts/Urbanist-ExtraLight.ttf
+          weight: 200  # Extra Light
+        - asset: assets/fonts/Urbanist-Light.ttf
+          weight: 300  # Light
+        - asset: assets/fonts/Urbanist-Regular.ttf
+          weight: 400  # Regular (Default)
+        - asset: assets/fonts/Urbanist-Medium.ttf
+          weight: 500  # Medium
+        - asset: assets/fonts/Urbanist-SemiBold.ttf
+          weight: 600  # Semi Bold
+        - asset: assets/fonts/Urbanist-Bold.ttf
+          weight: 800  # Bold
+        - asset: assets/fonts/Urbanist-ExtraBold.ttf
+          weight: 900  # Extra Bold
+
+ 
