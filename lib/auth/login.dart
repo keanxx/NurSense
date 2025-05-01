@@ -13,13 +13,17 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _isPasswordVisible = false; // State to toggle password visibility
+  final _emailController = TextEditingController(); // Controller for email input
+  final _passwordController = TextEditingController(); // Controller for password input
+
+  // Regex for email validation
+  final RegExp emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize:
-            const Size.fromHeight(5), // Specify the height of the AppBar
+        preferredSize: const Size.fromHeight(5), // Specify the height of the AppBar
         child: AppBar(
           backgroundColor: const Color(0xFF47CEFF),
         ),
@@ -39,31 +43,35 @@ class _LoginState extends State<Login> {
               const Text(
                 "Welcome to NurSense",
                 style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1,
-                    color: Color(0xFF2EBFF4),),
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
+                  color: Color(0xFF2EBFF4),
+                ),
               ),
               const Text(
                 "quiz & reviewer for all nursing students",
                 style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF3DC0EF)),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF3DC0EF),
+                ),
               ),
               const SizedBox(height: 50),
               const Text(
                 "Login to your account",
                 style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF3DC0EF)),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF3DC0EF),
+                ),
               ),
               const SizedBox(height: 30),
 
               // Email Field
               _buildInputField(
                 context,
+                controller: _emailController,
                 icon: Icons.mail_outline,
                 labelText: "Enter your Email",
                 isPassword: false,
@@ -74,16 +82,15 @@ class _LoginState extends State<Login> {
               // Password Field
               _buildInputField(
                 context,
+                controller: _passwordController,
                 icon: Icons.key_outlined,
                 labelText: "Enter your Password",
                 isPassword: true,
               ),
 
-              SizedBox(
-                height: 40,
-              ),
+              const SizedBox(height: 40),
 
-              // Button
+              // Login Button
               Container(
                 height: 40,
                 width: MediaQuery.of(context).size.width * 0.75, // Button width
@@ -100,17 +107,23 @@ class _LoginState extends State<Login> {
                 ),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Onboarding()),
-                    );
+                    // Validate email and password
+                    if (!emailRegex.hasMatch(_emailController.text)) {
+                      _showErrorDialog("Log in Failed", "Invalid Email Address");
+                    } else if (_passwordController.text.isEmpty) {
+                      _showErrorDialog("Log in Failed", "Password is required.");
+                    } else {
+                      // Proceed with login
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Onboarding()),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.transparent, // Transparent to show gradient
+                    backgroundColor: Colors.transparent, // Transparent to show gradient
                     shadowColor: Colors.transparent, // Remove default shadow
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),
@@ -126,40 +139,42 @@ class _LoginState extends State<Login> {
                 ),
               ),
 
-              SizedBox(
-                height: 70,
-              ),
+              const SizedBox(height: 70),
 
               Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account?",
-                  style: TextStyle(
-                    fontSize: 14.0,
-          decoration: TextDecoration.underline, // Underline the text
-          color: Color(0xFF2EBFF4), 
-        
-        ),),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Signup()),);
-                    },
-                    child: Text("Sign up",
+                  const Text(
+                    "Don't have an account?",
                     style: TextStyle(
                       fontSize: 14.0,
-                              decoration: TextDecoration.underline, // Underline the text
-                              color: Color(0xFF2EBFF4), 
-                              fontWeight: FontWeight.bold, 
-                            ),),
+                      decoration: TextDecoration.underline, // Underline the text
+                      color: Color(0xFF2EBFF4),
+                    ),
                   ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Signup()),
+                      );
+                    },
+                    child: const Text(
+                      "Sign up",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        decoration: TextDecoration.underline, // Underline the text
+                        color: Color(0xFF2EBFF4),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=> Levels()));
+                  }, child: Text("admin"))
                 ],
+
               ),
-
-              ElevatedButton(onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Levels()));
-
-              }, child: Text("admin"))
-
             ],
           ),
         ),
@@ -169,7 +184,8 @@ class _LoginState extends State<Login> {
 
   // Reusable Input Field Widget
   Widget _buildInputField(BuildContext context,
-      {required IconData icon,
+      {required TextEditingController controller,
+      required IconData icon,
       required String labelText,
       required bool isPassword}) {
     return SizedBox(
@@ -184,31 +200,19 @@ class _LoginState extends State<Login> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(7.5),
-              child: icon == Icons.key_outlined
-                  ? Transform(
-                      transform: Matrix4.identity()
-                        ..rotateY(3.14159) // 🔄 Flips the icon horizontally
-                        ..rotateZ(
-                            0.5), // 🌀 Rotates the icon slanting (0.5 radians ≈ 28.65 degrees)
-                      alignment: Alignment.center,
-                      child: Icon(
-                        icon,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Icon(
-                      icon, // Display other icons normally
-                      color: Colors.white,
-                    ),
+              child: Icon(
+                icon,
+                color: Colors.white,
+              ),
             ),
           ),
           const SizedBox(width: 10), // Space between icon and text field
           // Text Field
           Expanded(
-            
             child: SizedBox(
               height: 40,
               child: TextFormField(
+                controller: controller,
                 obscureText: isPassword
                     ? !_isPasswordVisible
                     : false, // Toggle visibility for password
@@ -217,10 +221,7 @@ class _LoginState extends State<Login> {
                   hintStyle: const TextStyle(color: Colors.black54, fontSize: 14),
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 3,
-                    horizontal: 10
-                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
                     borderSide: const BorderSide(
@@ -231,14 +232,13 @@ class _LoginState extends State<Login> {
                     borderRadius: BorderRadius.circular(5),
                     borderSide: const BorderSide(color: Colors.blueAccent),
                   ),
-                  // Add visibility toggle for password field
                   suffixIcon: isPassword
                       ? IconButton(
                           icon: Icon(
                             _isPasswordVisible
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
-                            color: Color(0xFF2EBFF4),
+                            color: const Color(0xFF2EBFF4),
                           ),
                           onPressed: () {
                             setState(() {
@@ -254,6 +254,27 @@ class _LoginState extends State<Login> {
           ),
         ],
       ),
+    );
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -11,24 +11,34 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-    bool _isPasswordVisible = false; // State to toggle password visibility
+  bool _isPasswordVisible = false; // State to toggle password visibility
+  final _firstNameController = TextEditingController(); // Controller for first name input
+  final _emailController = TextEditingController(); // Controller for email input
+  final _passwordController = TextEditingController(); // Controller for password input
+  final _confirmPasswordController = TextEditingController(); // Controller for confirm password input
+
+  // Regex for email validation
+  final RegExp emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
+  // Regex for password validation (at least 8 characters, 1 letter, 1 number)
+  final RegExp passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize:
-            const Size.fromHeight(5), // Specify the height of the AppBar
+        preferredSize: const Size.fromHeight(5), // Specify the height of the AppBar
         child: AppBar(
           backgroundColor: const Color(0xFF47CEFF),
         ),
       ),
       body: Container(
-        color: Color(0xFFD8F5FF),
+        color: const Color(0xFFD8F5FF),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-               SvgPicture.asset(
+              SvgPicture.asset(
                 "assets/images/nursenseLogo.svg",
                 height: 85,
                 width: 85,
@@ -37,48 +47,67 @@ class _SignupState extends State<Signup> {
               const Text(
                 "To access the NurSense",
                 style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1,
-                    color: Color(0xFF2EBFF4),),
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
+                  color: Color(0xFF2EBFF4),
+                ),
               ),
               const Text(
                 "please sign up for an account",
                 style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF3DC0EF)),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF3DC0EF),
+                ),
               ),
-              
               const SizedBox(height: 30),
-              _buildInputField(context, 
-              icon: Icons.person_2_outlined, 
-              labelText: "First Name", 
-              isPassword: false),
 
-              const SizedBox(height: 20),
-               _buildInputField(context, 
-              icon: Icons.email_outlined, 
-              labelText: "Email", 
-              isPassword: false),
-
-              const SizedBox(height: 20),
-               _buildInputField(context, 
-              icon: Icons.key_outlined, 
-              labelText: "Password", 
-              isPassword: false),
-
-              const SizedBox(height: 20),
-               _buildInputField(context, 
-              icon: Icons.key_outlined, 
-              labelText: "Password", 
-              isPassword: false),
-              
-             SizedBox(
-                height: 40,
+              // First Name Field
+              _buildInputField(
+                context,
+                controller: _firstNameController,
+                icon: Icons.person_2_outlined,
+                labelText: "Full Name",
+                isPassword: false,
               ),
 
-              // Button
+              const SizedBox(height: 20),
+
+              // Email Field
+              _buildInputField(
+                context,
+                controller: _emailController,
+                icon: Icons.email_outlined,
+                labelText: "Email",
+                isPassword: false,
+              ),
+
+              const SizedBox(height: 20),
+
+              // Password Field
+              _buildInputField(
+                context,
+                controller: _passwordController,
+                icon: Icons.key_outlined,
+                labelText: "Password",
+                isPassword: true,
+              ),
+
+              const SizedBox(height: 20),
+
+              // Confirm Password Field
+              _buildInputField(
+                context,
+                controller: _confirmPasswordController,
+                icon: Icons.key_outlined,
+                labelText: "Confirm Password",
+                isPassword: true,
+              ),
+
+              const SizedBox(height: 40),
+
+              // Signup Button
               Container(
                 height: 40,
                 width: MediaQuery.of(context).size.width * 0.75, // Button width
@@ -95,15 +124,30 @@ class _SignupState extends State<Signup> {
                 ),
                 child: ElevatedButton(
                   onPressed: () {
-                   Navigator.push(context, 
-                   MaterialPageRoute(builder: (context) => SignupConfirm()),);
+                    // Validate fields
+                    if (_firstNameController.text.isEmpty) {
+                      _showErrorDialog("Signup Failed", "Name is required.");
+                    } else if (!emailRegex.hasMatch(_emailController.text)) {
+                      _showErrorDialog("Signup Failed", "Invalid Email Address.");
+                    } else if (!passwordRegex.hasMatch(_passwordController.text)) {
+                      _showErrorDialog(
+                        "Signup Failed",
+                        "Password must be at least 8 characters long and include at least 1 letter and 1 number.",
+                      );
+                    } else if (_passwordController.text != _confirmPasswordController.text) {
+                      _showErrorDialog("Signup Failed", "Passwords do not match.");
+                    } else {
+                      // Proceed with signup
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignupConfirm()),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.transparent, // Transparent to show gradient
+                    backgroundColor: Colors.transparent, // Transparent to show gradient
                     shadowColor: Colors.transparent, // Remove default shadow
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5),
                     ),
@@ -119,37 +163,38 @@ class _SignupState extends State<Signup> {
                 ),
               ),
 
-            SizedBox(
-                height: 70,
-              ),
+              const SizedBox(height: 70),
 
               Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Already have an account?",
-                  style: TextStyle(
-                    fontSize: 14.0,
-          decoration: TextDecoration.underline, // Underline the text
-          color: Color(0xFF2EBFF4), 
-        
-        ),),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Login()),);
-                    },
-                    child: Text(" Login",
+                  const Text(
+                    "Already have an account?",
                     style: TextStyle(
                       fontSize: 14.0,
-                              decoration: TextDecoration.underline, // Underline the text
-                              color: Color(0xFF2EBFF4), 
-                              fontWeight: FontWeight.bold, 
-                            ),),
+                      decoration: TextDecoration.underline, // Underline the text
+                      color: Color(0xFF2EBFF4),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Login()),
+                      );
+                    },
+                    child: const Text(
+                      " Login",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        decoration: TextDecoration.underline, // Underline the text
+                        color: Color(0xFF2EBFF4),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
-              )
-
-
-
+              ),
             ],
           ),
         ),
@@ -157,11 +202,10 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  
-
- // Reusable Input Field Widget
+  // Reusable Input Field Widget
   Widget _buildInputField(BuildContext context,
-      {required IconData icon,
+      {required TextEditingController controller,
+      required IconData icon,
       required String labelText,
       required bool isPassword}) {
     return SizedBox(
@@ -176,31 +220,19 @@ class _SignupState extends State<Signup> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(7.5),
-              child: icon == Icons.key_outlined
-                  ? Transform(
-                      transform: Matrix4.identity()
-                        ..rotateY(3.14159) // 🔄 Flips the icon horizontally
-                        ..rotateZ(
-                            0.5), // 🌀 Rotates the icon slanting (0.5 radians ≈ 28.65 degrees)
-                      alignment: Alignment.center,
-                      child: Icon(
-                        icon,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Icon(
-                      icon, // Display other icons normally
-                      color: Colors.white,
-                    ),
+              child: Icon(
+                icon,
+                color: Colors.white,
+              ),
             ),
           ),
           const SizedBox(width: 10), // Space between icon and text field
           // Text Field
           Expanded(
-            
             child: SizedBox(
               height: 40,
               child: TextFormField(
+                controller: controller,
                 obscureText: isPassword
                     ? !_isPasswordVisible
                     : false, // Toggle visibility for password
@@ -209,10 +241,7 @@ class _SignupState extends State<Signup> {
                   hintStyle: const TextStyle(color: Colors.black54, fontSize: 14),
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 3,
-                    horizontal: 10
-                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
                     borderSide: const BorderSide(
@@ -223,14 +252,13 @@ class _SignupState extends State<Signup> {
                     borderRadius: BorderRadius.circular(5),
                     borderSide: const BorderSide(color: Colors.blueAccent),
                   ),
-                  // Add visibility toggle for password field
                   suffixIcon: isPassword
                       ? IconButton(
                           icon: Icon(
                             _isPasswordVisible
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
-                            color: Color(0xFF2EBFF4),
+                            color: const Color(0xFF2EBFF4),
                           ),
                           onPressed: () {
                             setState(() {
@@ -246,6 +274,27 @@ class _SignupState extends State<Signup> {
           ),
         ],
       ),
+    );
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
