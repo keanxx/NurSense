@@ -4,17 +4,14 @@ description: "A new Flutter project."
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-
 version: 1.0.0+1
 
 environment:
   sdk: ^3.6.1
 
-
 dependencies:
   flutter:
     sdk: flutter
-
   
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.0.17
@@ -25,14 +22,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
-
-  
   flutter_lints: ^5.0.0
 
-
 flutter:
-
   uses-material-design: true
 
   assets:
@@ -59,8 +51,8 @@ flutter:
     - assets/images/about.svg
     - assets/images/dashboard.svg
     - assets/images/logout.svg
-    
-
+    - assets/images/star.svg
+    - assets/images/add.svg
 
   fonts:
     - family: Urbanist  # Font Family Name
@@ -79,5 +71,3 @@ flutter:
           weight: 800  # Bold
         - asset: assets/fonts/Urbanist-ExtraBold.ttf
           weight: 900  # Extra Bold
-
- 

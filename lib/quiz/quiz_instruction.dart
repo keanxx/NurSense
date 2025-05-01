@@ -200,27 +200,35 @@ class QuizInstruction extends StatelessWidget {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => MultipleChoice()));
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const MultipleChoice(), // Replace with your login page
+                              ),
+                              (route) => false, // Removes all previous routes
+                            );
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            backgroundColor: Color(0xFF47CEFF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)
-                            )
-                          ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              backgroundColor: Color(0xFF47CEFF),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5))),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text("Proceed", 
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                                color: Colors.white),),
-                              SizedBox(
-                                  width: 30),
-                              SvgPicture.asset("assets/images/chevronRight.svg",)
+                              Text(
+                                "Proceed",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    color: Colors.white),
+                              ),
+                              SizedBox(width: 30),
+                              SvgPicture.asset(
+                                "assets/images/chevronRight.svg",
+                              )
                             ],
                           ),
                         )

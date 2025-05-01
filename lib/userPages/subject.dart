@@ -1,13 +1,14 @@
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:nursense/components/document_card.dart';
-
-import 'package:nursense/components/ppt_card.dart';
-import 'package:nursense/components/quiz_card.dart';
+import 'package:nursense/auth/login.dart';
+import 'package:nursense/components/customAppBar.dart';
 import 'package:nursense/components/subjects_card.dart';
-import 'package:nursense/dashboard.dart';
+import 'package:nursense/userPages/dashboard.dart';
 import 'package:nursense/quiz/quiz_instruction.dart';
+import '../components/quiz_card.dart';
+import '../components/ppt_card.dart';
+import '../components/document_card.dart';
 
 class Subject extends StatefulWidget {
   const Subject({super.key});
@@ -20,33 +21,39 @@ class _SubjectState extends State<Subject> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SvgPicture.asset(
-            "assets/images/nursenseLogo.svg",
-            height: 30,
-            fit: BoxFit.contain,
+      appBar: CustomAppBar(
+        title: "NurSense",
+        menuItems: [
+          MenuItem(
+            iconPath: "assets/images/dashboard.svg",
+            label: "Dashboard",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Dashboard()),
+              );
+            },
           ),
-        ),
-        title: Row(
-          children: [
-            Text(
-              "NurSense",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color(0xFF47CEFF),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.menu, color: Colors.white),
-          )
+          MenuItem(
+            iconPath: "assets/images/about.svg",
+            label: "About Us",
+            onTap: () {
+              print("About Us clicked");
+            },
+          ),
+          MenuItem(
+            iconPath: "assets/images/logout.svg",
+            label: "Logout",
+            onTap: () {
+               Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const Login(), // Replace with your login page
+      ),
+      (route) => false, // Removes all previous routes
+    );
+            },
+          ),
         ],
       ),
       body: Column(
@@ -131,8 +138,20 @@ class _SubjectState extends State<Subject> {
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
+                      isScrollControlled: true, // Allows custom height
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top:
+                              Radius.circular(20), // Rounded corners at the top
+                        ),
+                      ),
                       builder: (BuildContext context) {
-                        return BottomSheetContent(); // Use the new widget here
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height *
+                              0.5, // Half of the screen height
+                          child:
+                              const BottomSheetContent(), // Your bottom sheet content
+                        );
                       },
                     );
                   },
@@ -159,12 +178,12 @@ class BottomSheetContent extends StatefulWidget {
 }
 
 class _BottomSheetContentState extends State<BottomSheetContent> {
-  int _selectedIndex = 0; // Track the selected tab index
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // Number of tabs
+      length: 3,
       child: Column(
         children: [
           Container(
@@ -188,7 +207,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
               ),
               onTap: (index) {
                 setState(() {
-                  _selectedIndex = index; // Update the selected tab index
+                  _selectedIndex = index;
                 });
               },
               tabs: [
@@ -200,69 +219,73 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
                         width: 25,
                         height: 25,
                         colorFilter: _selectedIndex == 0
-                            ? const ColorFilter.mode(Color(0xFF00BBFF),
-                                BlendMode.srcIn) // Active tab color
-                            : const ColorFilter.mode(Colors.white,
-                                BlendMode.srcIn), // Inactive tab color
+                            ? const ColorFilter.mode(
+                                Color(0xFF00BBFF), BlendMode.srcIn)
+                            : const ColorFilter.mode(
+                                Colors.white, BlendMode.srcIn),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         "PowerPoints",
                         style: TextStyle(
                           color: _selectedIndex == 0
-                              ? const Color(0xFF00BBFF) // Active text color
-                              : Colors.white, // Inactive text color
+                              ? const Color(0xFF00BBFF)
+                              : Colors.white,
                         ),
                       ),
                     ],
                   ),
                 ),
                 Tab(
-  child: Row(
-    children: [
-      SvgPicture.asset(
-        "assets/images/wordWhite.svg",
-        width: 25,
-        height: 25,
-        colorFilter: _selectedIndex == 1
-            ? const ColorFilter.mode(Color(0xFF00BBFF), BlendMode.srcIn) // Active tab color
-            : const ColorFilter.mode(Colors.white, BlendMode.srcIn), // Inactive tab color
-      ),
-      const SizedBox(width: 8),
-      Text(
-        "PowerPoints",
-        style: TextStyle(
-          color: _selectedIndex == 1
-              ? Color(0xFF00BBFF) // Active text color
-              : Colors.white, // Inactive text color
-        ),
-      ),
-    ],
-  ),
-),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/images/wordWhite.svg",
+                        width: 25,
+                        height: 25,
+                        colorFilter: _selectedIndex == 1
+                            ? const ColorFilter.mode(
+                                Color(0xFF00BBFF), BlendMode.srcIn)
+                            : const ColorFilter.mode(
+                                Colors.white, BlendMode.srcIn),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Documents",
+                        style: TextStyle(
+                          color: _selectedIndex == 1
+                              ? const Color(0xFF00BBFF)
+                              : Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Tab(
-  child: Row(
-    children: [
-      SvgPicture.asset(
-        "assets/images/bulb.svg",
-        width: 25,
-        height: 25,
-        colorFilter: _selectedIndex == 2
-            ? const ColorFilter.mode(Color(0xFF00BBFF), BlendMode.srcIn) // Active tab color
-            : const ColorFilter.mode(Colors.white, BlendMode.srcIn), // Inactive tab color
-      ),
-      const SizedBox(width: 8),
-      Text(
-        "PowerPoints",
-        style: TextStyle(
-          color: _selectedIndex == 2
-              ? const Color(0xFF00BBFF) // Active text color
-              : Colors.white, // Inactive text color
-        ),
-      ),
-    ],
-  ),
-),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/images/bulb.svg",
+                        width: 25,
+                        height: 25,
+                        colorFilter: _selectedIndex == 2
+                            ? const ColorFilter.mode(
+                                Color(0xFF00BBFF), BlendMode.srcIn)
+                            : const ColorFilter.mode(
+                                Colors.white, BlendMode.srcIn),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Quizzes",
+                        style: TextStyle(
+                          color: _selectedIndex == 2
+                              ? const Color(0xFF00BBFF)
+                              : Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -281,32 +304,25 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
                             lesson: "1:",
                             fileName: "Subject Lesson",
                             description: "Download this file to review",
-                            onDownload: () {
-                            },
+                            onDownload: () {},
                           ),
                           FileCard(
                             lesson: "2:",
                             fileName: "Subject Lesson",
                             description: "Download this file to review",
-                            onDownload: () {
-                             
-                            },
+                            onDownload: () {},
                           ),
                           FileCard(
                             lesson: "3:",
                             fileName: "Subject",
                             description: "Download this file to review",
-                            onDownload: () {
-                              
-                            },
+                            onDownload: () {},
                           ),
                           FileCard(
                             lesson: "4:",
                             fileName: "Subject",
                             description: "Download this file to review",
-                            onDownload: () {
-                            
-                            },
+                            onDownload: () {},
                           ),
                         ],
                       ),
@@ -321,17 +337,13 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
                             lesson: "4:",
                             fileName: "Subject",
                             description: "Download this file to review",
-                            onDownload: () {
-                            
-                            },
+                            onDownload: () {},
                           ),
                           DocumentCard(
                             lesson: "4:",
                             fileName: "Subject",
                             description: "Download this file to review",
-                            onDownload: () {
-                             
-                            },
+                            onDownload: () {},
                           ),
                         ],
                       ),

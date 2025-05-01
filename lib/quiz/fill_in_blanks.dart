@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nursense/components/customDialog.dart';
+import 'package:nursense/quiz/result.dart';
 
 class FillInBlanks extends StatefulWidget {
   const FillInBlanks({super.key});
@@ -13,7 +15,7 @@ class _FillInBlanksState extends State<FillInBlanks> {
   late TextEditingController _answerController; // Declare the controller
   bool isAnswerSelected = false; // Initially, the button is hidden
   Timer? _timer;
-  int _remainingSeconds = 60; // 1 minute
+  int _remainingSeconds = 10; // 10 seconds for testing
 
   String get timerText {
     final minutes = (_remainingSeconds ~/ 60).toString().padLeft(2, '0');
@@ -36,7 +38,29 @@ class _FillInBlanksState extends State<FillInBlanks> {
         });
       } else {
         timer.cancel();
-        // Time's up logic here
+        // Show the CustomDialog when the timer runs out
+        if (mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false, // Prevent dismissing the dialog by tapping outside
+            builder: (BuildContext context) {
+              return Customdialog(
+                icon: const Icon(
+                  Icons.timer_off_outlined, // Example icon
+                  size: 50,
+                  color: Color(0xFF47CEFF),
+                ),
+                title: "Time's Up!",
+                subtitle: "Better luck next time",
+                buttonText: "See the results",
+                onPressed: () {
+                  Navigator.pop(context); // Close the dialog
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Result())); // Navigate back to the previous screen
+                },
+              );
+            },
+          );
+        }
       }
     });
   }
@@ -48,15 +72,20 @@ class _FillInBlanksState extends State<FillInBlanks> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+ @override
+Widget build(BuildContext context) {
+  return WillPopScope(
+    onWillPop: () async {
+      // Returning false disables the back button
+      return false;
+    },
+    child: Scaffold(
       backgroundColor: const Color(0xFF47CEFF),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
         child: AppBar(
           backgroundColor: const Color(0xFF47CEFF),
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: false, // Disable the default back button
         ),
       ),
       body: Column(
@@ -131,7 +160,6 @@ class _FillInBlanksState extends State<FillInBlanks> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: Column(
-                            
                             children: [
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,9 +208,9 @@ class _FillInBlanksState extends State<FillInBlanks> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
+                              const Text(
                                 "Answer: ",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,
                                   color: Color(0xFF47CEFF),
@@ -242,8 +270,8 @@ class _FillInBlanksState extends State<FillInBlanks> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 15, bottom: 10),
+                                  padding: const EdgeInsets.only(
+                                      top: 15, bottom: 10),
                                   child: Row(
                                     children: const [
                                       Text(
@@ -330,6 +358,7 @@ class _FillInBlanksState extends State<FillInBlanks> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

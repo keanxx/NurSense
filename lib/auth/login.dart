@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:nursense/onboarding.dart';
+import 'package:nursense/admin/levels.dart';
+import 'package:nursense/userPages/onboarding.dart';
 import 'package:nursense/auth/signup.dart';
 
 class Login extends StatefulWidget {
@@ -152,7 +153,12 @@ class _LoginState extends State<Login> {
                             ),),
                   ),
                 ],
-              )
+              ),
+
+              ElevatedButton(onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Levels()));
+
+              }, child: Text("admin"))
 
             ],
           ),

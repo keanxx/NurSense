@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nursense/quiz/fill_in_blanks.dart';
+import 'package:nursense/components/customDialog.dart';
+import 'package:nursense/quiz/result.dart';
 
 class MultipleChoice extends StatefulWidget {
   const MultipleChoice({super.key});
@@ -11,12 +13,11 @@ class MultipleChoice extends StatefulWidget {
 }
 
 class _MultipleChoiceState extends State<MultipleChoice> {
-  // List to store the color state for each answer
   List<Color> boxColors = List<Color>.filled(4, Colors.white, growable: false);
   bool isAnswerSelected = false;
 
   Timer? _timer;
-  int _remainingSeconds = 60; // 1 minute
+  int _remainingSeconds = 10; // 10 seconds for testing
 
   String get timerText {
     final minutes = (_remainingSeconds ~/ 60).toString().padLeft(2, '0');
@@ -31,14 +32,36 @@ class _MultipleChoiceState extends State<MultipleChoice> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingSeconds > 0) {
         setState(() {
           _remainingSeconds--;
         });
       } else {
         timer.cancel();
-        // Time's up logic here
+        // Show the CustomDialog when the timer runs out
+        if (mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false, // Prevent dismissing the dialog by tapping outside
+            builder: (BuildContext context) {
+              return Customdialog(
+                icon: const Icon(
+                  Icons.timer_off_outlined, // Example icon
+                  size: 50,
+                  color: Color(0xFF47CEFF),
+                ),
+                title: "Time's Up!",
+                subtitle: "Better luck next time",
+                buttonText: "See the results",
+                onPressed: () {
+                  Navigator.pop(context); // Close the dialog
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Result())); // Navigate back to the previous screen
+                },
+              );
+            },
+          );
+        }
       }
     });
   }
@@ -49,15 +72,20 @@ class _MultipleChoiceState extends State<MultipleChoice> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+@override
+Widget build(BuildContext context) {
+  return WillPopScope(
+    onWillPop: () async {
+      // Returning false disables the back button
+      return false;
+    },
+    child: Scaffold(
       backgroundColor: const Color(0xFF47CEFF),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
         child: AppBar(
           backgroundColor: const Color(0xFF47CEFF),
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: false, // Disable the default back button
         ),
       ),
       body: Column(
@@ -67,14 +95,14 @@ class _MultipleChoiceState extends State<MultipleChoice> {
             padding: const EdgeInsets.only(right: 15, bottom: 15),
             child: Row(
               children: [
-                Spacer(),
-                Icon(
+                const Spacer(),
+                const Icon(
                   Icons.hourglass_bottom_outlined,
                   color: Colors.white,
                 ),
                 Text(
                   timerText,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -95,12 +123,12 @@ class _MultipleChoiceState extends State<MultipleChoice> {
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.all(15),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(15),
+                    decoration: const BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: Color(0xFFC3EFFF), // Border color
-                          width: 2.0, // Border width
+                          color: Color(0xFFC3EFFF),
+                          width: 2.0,
                         ),
                       ),
                     ),
@@ -126,7 +154,7 @@ class _MultipleChoiceState extends State<MultipleChoice> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(15),
                     child: Column(
                       children: [
                         Row(
@@ -143,7 +171,7 @@ class _MultipleChoiceState extends State<MultipleChoice> {
                             const SizedBox(width: 5),
                             Flexible(
                               child: Text(
-                                "question here askdjfgkashjdg sdkgjasdkg aksdjfkjasf",
+                                "What is the medical term for inflammation of the liver?",
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
@@ -154,25 +182,25 @@ class _MultipleChoiceState extends State<MultipleChoice> {
                           ],
                         ),
                         const SizedBox(height: 15),
-                        _buildAnswerRow(0, "answer 1"),
+                        _buildAnswerRow(0, "Hepatitis"),
                         const SizedBox(height: 15),
-                        _buildAnswerRow(1, "answer 2"),
+                        _buildAnswerRow(1, "Nephritis"),
                         const SizedBox(height: 15),
-                        _buildAnswerRow(2, "answer 3"),
+                        _buildAnswerRow(2, "Gastritis"),
                         const SizedBox(height: 15),
-                        _buildAnswerRow(3, "answer 4"),
+                        _buildAnswerRow(3, "Arthritis"),
                         const SizedBox(height: 15),
                       ],
                     ),
                   ),
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: const BoxDecoration(
                       border: Border(
                         top: BorderSide(
-                          color: Color(0xFFC3EFFF), // Border color
-                          width: 2.0, // Border width
+                          color: Color(0xFFC3EFFF),
+                          width: 2.0,
                         ),
                       ),
                     ),
@@ -184,7 +212,7 @@ class _MultipleChoiceState extends State<MultipleChoice> {
                           Padding(
                             padding: const EdgeInsets.only(top: 15, bottom: 15),
                             child: Row(
-                              children: [
+                              children: const [
                                 Text(
                                   "1",
                                   style: TextStyle(
@@ -193,10 +221,8 @@ class _MultipleChoiceState extends State<MultipleChoice> {
                                     color: Color(0xFF24C5FF),
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                const Text(
+                                SizedBox(width: 5),
+                                Text(
                                   "out of",
                                   style: TextStyle(
                                     fontSize: 16,
@@ -204,9 +230,7 @@ class _MultipleChoiceState extends State<MultipleChoice> {
                                     color: Color(0xFF24C5FF),
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 5,
-                                ),
+                                SizedBox(width: 5),
                                 Text(
                                   "10",
                                   style: TextStyle(
@@ -226,7 +250,8 @@ class _MultipleChoiceState extends State<MultipleChoice> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => FillInBlanks()),
+                                        builder: (context) =>
+                                            const FillInBlanks()),
                                   );
                                 }
                               },
@@ -269,8 +294,9 @@ class _MultipleChoiceState extends State<MultipleChoice> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   // Helper method to build each answer row
   Widget _buildAnswerRow(int index, String answerText) {

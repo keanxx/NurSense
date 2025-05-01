@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:nursense/dashboard.dart';
+import 'package:nursense/userPages/dashboard.dart';
 
 class LevelSelect extends StatefulWidget {
   const LevelSelect({super.key});

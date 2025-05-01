@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:nursense/dashboard.dart';
-import 'package:nursense/level_select.dart';
-import 'package:nursense/loading.dart';
+import 'package:nursense/userPages/dashboard.dart';
+import 'package:nursense/userPages/level_select.dart';
+import 'package:nursense/userPages/loading.dart';
 import 'package:nursense/auth/login.dart';
-import 'package:nursense/onboarding.dart';
+import 'package:nursense/userPages/onboarding.dart';
 import 'package:nursense/auth/signup.dart';
 import 'package:nursense/auth/signup_confirm.dart';
 import 'package:nursense/quiz/quiz_instruction.dart';
-import 'package:nursense/subject.dart';
+import 'package:nursense/userPages/subject.dart';
 
 void main() {
   runApp(const MyApp());
